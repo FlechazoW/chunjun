@@ -1,4 +1,28 @@
-## 如何构建chunjun的CDH-parcel包
+---
+title: 如何构建ChunJun的CDH-parcel包
+weight: 4
+type: docs
+nav-title: 如何构建ChunJun的CDH-parcel包
+---
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+# 如何构建chunjun的CDH-parcel包
 
 本文面向ChunJun的CDH环境的应用开发人员，尝试通过一个Cloudera CDH环境应用开发者的角度阐述如何构建chunjun CDH parcel，并且集成到CDH中。
 主要步骤如下：
@@ -9,9 +33,9 @@
 4. 构造csd
 5. 集成到CDH
 
-### 一. 前提环境准备
+## 一. 前提环境准备
 
-#### （1）CDH集群
+### （1）CDH集群
 
 首先您需要一个已经搭建成功的CDH集群，因为chunjun需要依赖flink，所以首先需要成功集成flink，而flink又依赖hdoop，所以您需要确认如下信息：
 
@@ -21,27 +45,25 @@
 
 然后，根据flink版本来选择使用对应版本的chunjun进行parcel包的构建工作。
 
-本文使用了CDH6.3.2，Flink-1.12.7 Hadoop3.0.0 的CDH前提环境来集成CHUNJUN， 因此本文使用的chunjun版本兼容flink1.12.7。
+本文使用了CDH6.3.2，Flink-1.12.7 Hadoop3.0.0 的CDH前提环境来集成ChunJun， 因此本文使用的chunjun版本兼容flink1.12.7。
 写此文时，master分支就是当时最新的支持flink1.12.7的纯钧版本。
 
 关于CDH部署和Flink集成到CDH，不是本文阐述范围, 本文不再阐述，请各位同学搜寻其他资料完成。
 
-#### （2）chunjun部署包
+### （2）chunjun部署包
 
 部署包可自己本地开发环境编译打包得到，也可以使用您已经部署的包。
 如果想自己编译打包，请参考 README_CH.md 的 源码编译 章节。
 
-本文使用的包采用编译打包生成的 assemly 包解压而来，包名为chunjun，包内的结构如下：
+本文使用的包采用编译打包生成的 assembly 包解压而来，包名为chunjun；亦可自行通过下载[源码](https://github.com/DTStack/chunjun.git)进行打包编译
 
-![image-20220614172338108](../../website/src/images/doc/contribute/image-20220826112115423.png)
+## 二. cm_ext_tools编译和部署
 
-### 二. cm_ext_tools编译和部署
-
-#### (1) 从github上下载源码
+### (1) 从github上下载源码
 
 地址： https://github.com/cloudera/cm_ext
 
-#### (2) 编译打包
+### (2) 编译打包
 
 此步骤主要是为了生成  XXX/cm_ext/validator/target/validator.jar 文件。
 同学们遵循 cm_ext 工程的 README.md 文件操作即可完成。
@@ -49,28 +71,28 @@
 validator.jar 文件将被用于后面制作csd jar包。
 
 
-### 三. 构造parcel包
+## 三. 构造parcel包
 
-#### (1) 规划与准备
+### (1) 规划与准备
 首先需要一台机器来制作parcel包，这里我选择的是一台linux机器。
 * 创建一个工作目录，比如 chunjunparcel，
 * 将 validator.jar 上传到 该目录。
 
-#### (2) 制作parcel包的源文件
+### (2) 制作parcel包的源文件
 
 这一步你可以在linux上执行，也可以在你的本地开发机（一般为windows环境）上执行。
 我这里就在开发机windows上执行了。
 
-#####1. 创建一个文件夹，命名为 CHUNJUN-#chunjun_varsion-flink#flink_version, 比如：
+#### 1. 创建一个文件夹，命名为 CHUNJUN-#chunjun_varsion-flink#flink_version, 比如：
 ```shell
 mkdir CHUNJUN-1.12-flink.1.12.7
 ```
 
-#####2. 在这个文件里创建2个子文件夹， 分别命名为 lib 和 meta
+#### 2. 在这个文件里创建2个子文件夹， 分别命名为 lib 和 meta
 
-#####3. 将chunjun的部署包解压到 lib 目录
+#### 3. 将chunjun的部署包解压到 lib 目录
 
-#####4. 创建 chunjun_env.sh 文件， 此文件位于 meta 目录内， 文件内容如下：
+#### 4. 创建 chunjun_env.sh 文件， 此文件位于 meta 目录内， 文件内容如下：
 
 ```shell
 #!/bin/bash
@@ -115,7 +137,7 @@ echo "chunjun_env.sh successfully executed at `date`"
 
 ```
 
-#####5. 创建 parcel.json 文件， 此文件位于 meta 目录内, 文件内容如下:
+#### 5. 创建 parcel.json 文件， 此文件位于 meta 目录内, 文件内容如下:
 ```shell
 {
     "schema_version": 1,
@@ -161,7 +183,7 @@ echo "chunjun_env.sh successfully executed at `date`"
 chunjun和flink版本也需要一起修改。
 * users-chunjun-home 配置项为chunjun用户的家目录
 
-#### (2) 使用 parcel包源文件生成 parcel 包
+### (3) 使用 parcel包源文件生成 parcel 包
 
 将 CHUNJUN-1.12-flink.1.12.7 源文件上传到 linux 工作目录， 然后 执行如下命令生成parcel包：
 ```shell
@@ -190,15 +212,14 @@ echo e19557d9cef57d19c6dfbbe0aa05b01aa8c6ca52 > CHUNJUN-1.12-flink.1.12.7-el7.pa
 
 至此，恭喜您，您已经完成一半工作了。 下面将开始制作csd文件。
 
-### 四. 构造csd 
+## 四. 构造csd 
 
-#### (1) 规划目录
+### (1) 规划目录
 
-创建csd-src文件夹，在文件夹内新建三个子文件夹，分别为 descriptor， images， scritps。
-![image-20220614172338108](../../website/src/images/doc/contribute/image-20220826112115428.png)
+创建csd-src文件夹，在文件夹内新建三个子文件夹，分别为 descriptor， images， scripts。
 
-#### (2) 构造csd源文件
-##### 1. 在 descriptor文件夹内创建 service.sdl 文件， 内容如下：
+### (2) 构造csd源文件
+#### 1. 在 descriptor文件夹内创建 service.sdl 文件， 内容如下：
 ```shell script
 {
 	"name": "CHUNJUN",
@@ -292,14 +313,14 @@ echo e19557d9cef57d19c6dfbbe0aa05b01aa8c6ca52 > CHUNJUN-1.12-flink.1.12.7-el7.pa
 * "version": "1.12" 为 chunjun 的版本
 * 一般情况下，其他内容均无需修改
 
-##### 2. 在 images 文件夹内创建 chunjun.png 图片
+#### 2. 在 images 文件夹内创建 chunjun.png 图片
 这个就是一个 16*16 像素的chunjun logo图片。
 您可以直接使用如下图片素材即可：
 ```shell script
 chunjun/website/src/images/doc/contribute/chunjun.png 
 ```
 
-##### 3. 在 scripts 文件夹内创建 control.sh 文件， 内容如下：
+#### 3. 在 scripts 文件夹内创建 control.sh 文件， 内容如下：
 ```shell script
 #!/bin/bash
 ##
@@ -378,7 +399,7 @@ CHUNJUN-1.12-flink.1.12.7-el7.parcel.sha
 CHUNJUN-1.12.jar
 ```
 
-### 五. 集成到CDH
+## 五. 集成到CDH
 这一步就是CDH扩展集成第三方PARCEL。
 
 1. 将 CHUNJUN-1.12-flink.1.12.7-el7.parcel 和 CHUNJUN-1.12-flink.1.12.7-el7.parcel.sha 包放入 CDH 管理主节点的parcel-repo目录，

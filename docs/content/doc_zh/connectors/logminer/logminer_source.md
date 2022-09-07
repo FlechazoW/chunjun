@@ -10,11 +10,11 @@ oracle10,oracle11,oracle12,oracle19，支持RAC,主备架构
 
 ## 三、数据库配置
 
-[Oracle配置LogMiner](LogMiner配置.md)
+[Oracle配置LogMiner](how_to_config_logminer.md)
 
 ## 四、LogMiner原理
 
-[LogMiner原理](LogMiner原理.md)
+[LogMiner原理](the_principle_of_logminer_connector.md)
 
 ## 五、插件名称
 

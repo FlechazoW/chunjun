@@ -1,6 +1,8 @@
 ---
-title: 纯钧介绍
+title: 纯钧（ChunJun）介绍
+weight: 4
 type: docs
+nav-title: 介绍
 ---
 
 <!--
@@ -42,6 +44,10 @@ under the License.
 - 支持脏数据存储，并提供指标监控等；
 - 配合checkpoint实现断点续传；
 - 不仅仅支持同步DML数据，还支持Schema变更同步；
+
+## 架构
+
+WIP
 
 ## 贡献者
 
