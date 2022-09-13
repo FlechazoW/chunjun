@@ -39,7 +39,7 @@ public class BaseMetric {
 
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    private final Long delayPeriodMill = 20000L;
+    public static final Long DELAY_PERIOD_MILL = 20000L;
 
     private final MetricGroup chunjunMetricGroup;
 
@@ -52,7 +52,8 @@ public class BaseMetric {
                 runtimeContext
                         .getMetricGroup()
                         .addGroup(
-                                Metrics.METRIC_GROUP_KEY_FLINKX, Metrics.METRIC_GROUP_VALUE_OUTPUT);
+                                Metrics.METRIC_GROUP_KEY_CHUNJUN,
+                                Metrics.METRIC_GROUP_VALUE_OUTPUT);
 
         chunjunDirtyMetricGroup =
                 chunjunMetricGroup.addGroup(
@@ -83,9 +84,9 @@ public class BaseMetric {
 
     public void waitForReportMetrics() {
         try {
-            Thread.sleep(delayPeriodMill);
+            Thread.sleep(DELAY_PERIOD_MILL);
         } catch (InterruptedException e) {
-            SysUtil.sleep(delayPeriodMill);
+            SysUtil.sleep(DELAY_PERIOD_MILL);
             LOG.warn("Task thread is interrupted");
         }
     }

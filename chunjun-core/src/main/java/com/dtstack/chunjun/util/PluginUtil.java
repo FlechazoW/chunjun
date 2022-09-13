@@ -27,6 +27,7 @@ import com.dtstack.chunjun.enums.OperatorType;
 import com.dtstack.chunjun.options.Options;
 import com.dtstack.chunjun.throwable.ChunJunRuntimeException;
 
+import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.api.common.cache.DistributedCache;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.PipelineOptions;
@@ -144,7 +145,7 @@ public class PluginUtil {
     }
 
     /**
-     * Obtain local and remote FlinkX plugin jar package path
+     * Obtain local and remote ChunJun plugin jar package path
      *
      * @param pluginPath
      * @param suffix
@@ -264,7 +265,8 @@ public class PluginUtil {
      * @param suffix 插件类型前缀，如：source、sink
      * @return 插件包类全限定名，如：com.dtstack.chunjun.connector.binlog.source.BinlogSourceFactory
      */
-    private static String camelize(String pluginName, String suffix) {
+    @VisibleForTesting
+    protected static String camelize(String pluginName, String suffix) {
         int pos = pluginName.indexOf(suffix);
         String left = pluginName.substring(0, pos);
         left = left.toLowerCase();
@@ -414,7 +416,7 @@ public class PluginUtil {
             jarList.addAll(urlList);
 
             List<String> pipelineJars = new ArrayList();
-            LOG.info("Flinkx executionMode: " + executionMode);
+            LOG.info("ChunJun executionMode: " + executionMode);
             if (ClusterMode.getByName(executionMode) == ClusterMode.kubernetesApplication) {
                 for (String jarUrl : jarList) {
                     String newJarUrl = jarUrl;
@@ -430,7 +432,7 @@ public class PluginUtil {
                 pipelineJars.addAll(jarList);
             }
 
-            LOG.info("Flinkx reset pipeline.jars: " + pipelineJars);
+            LOG.info("ChunJun reset pipeline.jars: " + pipelineJars);
             configuration.set(PipelineOptions.JARS, pipelineJars);
 
             List<String> classpathList = configuration.get(PipelineOptions.CLASSPATHS);

@@ -1,0 +1,54 @@
+<assembly>
+    <id>${project.version}</id>
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <fileSets>
+        <fileSet>
+            <directory>${project.parent.basedir}</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>README*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>
+                ${project.parent.basedir}/bin
+            </directory>
+            <outputDirectory>bin</outputDirectory>
+        </fileSet>
+		<fileSet>
+			<directory>
+				${project.parent.basedir}/chunjun-dist
+			</directory>
+			<outputDirectory>chunjun-dist</outputDirectory>
+			<includes>
+				<include>*/**</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>
+				${project.parent.basedir}/chunjun-examples
+			</directory>
+			<outputDirectory>chunjun-examples</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>
+				${project.parent.basedir}/lib
+			</directory>
+			<outputDirectory>lib</outputDirectory>
+		</fileSet>
+    </fileSets>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <unpack>false</unpack>
+            <scope>runtime</scope>
+            <useProjectArtifact>false</useProjectArtifact>
+        </dependencySet>
+    </dependencySets>
+</assembly>

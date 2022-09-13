@@ -24,6 +24,8 @@
 		<!--MQ-->
 		<module>chunjun-connector-kafka</module>
 		<module>chunjun-connector-emqx</module>
+		<module>chunjun-connector-rocketmq</module>
+		<module>chunjun-connector-rabbitmq</module>
 
 		<!--RDB-->
 		<module>chunjun-connector-jdbc-base</module>
@@ -32,8 +34,6 @@
 		<module>chunjun-connector-sqlserver</module>
 		<module>chunjun-connector-db2</module>
 		<module>chunjun-connector-postgresql</module>
-		<module>chunjun-connector-gbase</module>
-		<module>chunjun-connector-kingbase</module>
 		<module>chunjun-connector-greenplum</module>
 		<module>chunjun-connector-dm</module>
 		<module>chunjun-connector-clickhouse</module>
@@ -43,20 +43,21 @@
 		<module>chunjun-connector-starrocks</module>
 		<module>chunjun-connector-oceanbase</module>
 		<module>chunjun-connector-cassandra</module>
+		<module>chunjun-connector-sybase</module>
 
 		<!--File-->
-        <module>chunjun-connector-file</module>
+		<module>chunjun-connector-file</module>
 		<module>chunjun-connector-filesystem</module>
-        <module>chunjun-connector-ftp</module>
-<!--        <module>chunjun-connector-hdfs</module>-->
-<!--        <module>chunjun-connector-hive</module>-->
-<!--        <module>chunjun-connector-inceptor</module>-->
+		<module>chunjun-connector-ftp</module>
+		<module>chunjun-connector-hdfs</module>
+		<module>chunjun-connector-hive</module>
+		<module>chunjun-connector-hive3</module>
 
 		<!--NoSql-->
 		<module>chunjun-connector-hbase-base</module>
 		<module>chunjun-connector-hbase-1.4</module>
-<!--		<module>chunjun-connector-elasticsearch5</module>-->
-<!--		<module>chunjun-connector-elasticsearch6</module>-->
+		<module>chunjun-connector-hbase2</module>
+		<!--		<module>chunjun-connector-elasticsearch6</module>-->
 		<module>chunjun-connector-elasticsearch7</module>
 		<module>chunjun-connector-elasticsearch-base</module>
 		<module>chunjun-connector-redis</module>
@@ -66,6 +67,7 @@
 
 		<!--CDC-->
 		<module>chunjun-connector-binlog</module>
+		<module>chunjun-connector-oceanbasecdc</module>
 		<module>chunjun-connector-oraclelogminer</module>
 		<module>chunjun-connector-sqlservercdc</module>
 		<module>chunjun-connector-pgwal</module>
@@ -76,7 +78,7 @@
 
 		<!--Distribute plugin, just for SYNC-->
 		<module>chunjun-connector-mysqld</module>
-	</modules>
+    </modules>
 
 
 	<dependencies>
@@ -93,6 +95,10 @@
 				<exclusion>
 					<groupId>ch.qos.logback</groupId>
 					<artifactId>logback-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.flink</groupId>
+					<artifactId>flink-shaded-guava</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -115,11 +121,11 @@
 									<copy todir="${basedir}/../../${dist.dir}/${connector.base.dir}/${connector.dir}/"
 										  file="${basedir}/target/${project.artifactId}-${project.version}.jar"/>
 									<move file="${basedir}/../../${dist.dir}/${connector.base.dir}/${connector.dir}/${project.artifactId}-${project.version}.jar"
-										  tofile="${basedir}/../../${dist.dir}/${connector.base.dir}/${connector.dir}/${project.artifactId}-${git.branch}.jar"/>
+										  tofile="${basedir}/../../${dist.dir}/${connector.base.dir}/${connector.dir}/${project.artifactId}.jar"/>
 									<delete>
 										<fileset dir="${basedir}/../../${dist.dir}/${connector.base.dir}/${connector.dir}/"
 												 includes="${project.artifactId}-*.jar"
-												 excludes="${project.artifactId}-${git.branch}.jar"/>
+												 excludes="${project.artifactId}.jar"/>
 									</delete>
 								</tasks>
 							</configuration>

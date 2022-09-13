@@ -44,6 +44,7 @@ import com.dtstack.chunjun.util.ExceptionUtil;
 import com.dtstack.chunjun.util.JsonUtil;
 import com.dtstack.chunjun.util.event.EventCenter;
 
+import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.api.common.ExecutionConfig;
 import org.apache.flink.api.common.accumulators.LongCounter;
 import org.apache.flink.api.common.io.CleanupWhenUnsuccessful;
@@ -176,6 +177,8 @@ public abstract class BaseRichOutputFormat extends RichOutputFormat<RowData>
     protected boolean executeDdlAble;
     protected EventCenter eventCenter;
     protected MonitorConf monitorConf;
+
+    @VisibleForTesting protected boolean useAbstractColumn;
 
     private transient volatile Exception timerWriteException;
 
@@ -396,7 +399,8 @@ public abstract class BaseRichOutputFormat extends RichOutputFormat<RowData>
     /** 初始化对象大小计算器 */
     protected void initRowSizeCalculator() {
         rowSizeCalculator =
-                RowSizeCalculator.getRowSizeCalculator(config.getRowSizeCalculatorType());
+                RowSizeCalculator.getRowSizeCalculator(
+                        config.getRowSizeCalculatorType(), useAbstractColumn);
     }
 
     /** 从checkpoint状态缓存map中恢复上次任务的指标信息 */
@@ -489,7 +493,7 @@ public abstract class BaseRichOutputFormat extends RichOutputFormat<RowData>
         }
     }
 
-    private void checkTimerWriteException() {
+    protected void checkTimerWriteException() {
         if (null != timerWriteException) {
             if (timerWriteException instanceof NoRestartException) {
                 throw (NoRestartException) timerWriteException;
@@ -710,5 +714,9 @@ public abstract class BaseRichOutputFormat extends RichOutputFormat<RowData>
 
     public void setMonitorConf(MonitorConf monitorConf) {
         this.monitorConf = monitorConf;
+    }
+
+    public void setUseAbstractColumn(boolean useAbstractColumn) {
+        this.useAbstractColumn = useAbstractColumn;
     }
 }

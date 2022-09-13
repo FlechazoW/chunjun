@@ -33,7 +33,6 @@
 
 	<properties>
 		<hbase.version>1.4.3</hbase.version>
-		<hadoop.version>2.4.1</hadoop.version>
 		<log4j.version>2.12.1</log4j.version>
 	</properties>
 	<dependencies>
@@ -124,5 +123,11 @@
 			<artifactId>log4j-1.2-api</artifactId>
 			<version>${log4j.version}</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

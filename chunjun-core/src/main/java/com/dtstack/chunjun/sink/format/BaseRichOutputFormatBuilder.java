@@ -33,10 +33,15 @@ import org.slf4j.LoggerFactory;
  *
  * @author huyifan.zju@163.com
  */
-public abstract class BaseRichOutputFormatBuilder {
+public abstract class BaseRichOutputFormatBuilder<T extends BaseRichOutputFormat> {
+
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    protected BaseRichOutputFormat format;
+    protected T format;
+
+    public BaseRichOutputFormatBuilder(T format) {
+        this.format = format;
+    }
 
     public void setConfig(ChunJunCommonConf config) {
         format.setConfig(config);
@@ -51,7 +56,12 @@ public abstract class BaseRichOutputFormatBuilder {
     }
 
     public void setRowConverter(AbstractRowConverter rowConverter) {
+        setRowConverter(rowConverter, false);
+    }
+
+    public void setRowConverter(AbstractRowConverter rowConverter, boolean useAbstractColumn) {
         format.setRowConverter(rowConverter);
+        format.setUseAbstractColumn(useAbstractColumn);
     }
 
     /** Check the value of parameters */
