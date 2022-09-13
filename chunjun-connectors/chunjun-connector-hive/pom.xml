@@ -83,15 +83,6 @@
 					<artifactId>log4j-1.2-api</artifactId>
 					<groupId>org.apache.logging.log4j</groupId>
 				</exclusion>
-				<!--those classes are existed in flink-table-planner-blink -->
-				<exclusion>
-					<artifactId>calcite-core</artifactId>
-					<groupId>org.apache.calcite</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>calcite-avatica</artifactId>
-					<groupId>org.apache.calcite</groupId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 

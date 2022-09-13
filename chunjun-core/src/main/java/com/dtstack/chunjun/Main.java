@@ -50,6 +50,10 @@ import com.dtstack.chunjun.util.PrintUtil;
 import com.dtstack.chunjun.util.PropertiesUtil;
 import com.dtstack.chunjun.util.TableUtil;
 
+import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+
 import org.apache.flink.api.common.JobExecutionResult;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.core.execution.JobClient;
@@ -63,15 +67,10 @@ import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.table.data.RowData;
+import org.apache.flink.table.delegation.ExpressionParser;
 import org.apache.flink.table.expressions.Expression;
-import org.apache.flink.table.expressions.ExpressionParser;
-import org.apache.flink.table.factories.FactoryUtil;
-import org.apache.flink.table.factories.TableFactoryService;
 import org.apache.flink.table.types.DataType;
 
-import com.google.common.base.Preconditions;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,17 +108,17 @@ public class Main {
         String replacedJob = JobUtil.replaceJobParameter(options.getP(), job);
         Properties confProperties = PropertiesUtil.parseConf(options.getConfProp());
         StreamExecutionEnvironment env = EnvFactory.createStreamExecutionEnvironment(options);
-        StreamTableEnvironment tEnv =
-                EnvFactory.createStreamTableEnvironment(env, confProperties, options.getJobName());
-        LOG.info(
-                "Register to table configuration:{}",
-                tEnv.getConfig().getConfiguration().toString());
         switch (EJobType.getByName(options.getJobType())) {
             case SQL:
+                StreamTableEnvironment tEnv =
+                        EnvFactory.createStreamTableEnvironment(env, confProperties, options.getJobName());
+                LOG.info(
+                        "Register to table configuration:{}",
+                        tEnv.getConfig().getConfiguration().toString());
                 exeSqlJob(env, tEnv, replacedJob, options);
                 break;
             case SYNC:
-                exeSyncJob(env, tEnv, replacedJob, options);
+                exeSyncJob(env, replacedJob, options);
                 break;
             default:
                 throw new ChunJunRuntimeException(
@@ -138,6 +137,7 @@ public class Main {
      * @param tableEnv
      * @param job
      * @param options
+     *
      * @throws Exception
      */
     private static void exeSqlJob(
@@ -158,9 +158,6 @@ public class Main {
             }
         } catch (Exception e) {
             throw new ChunJunRuntimeException(e);
-        } finally {
-            FactoryUtil.getFactoryHelperThreadLocal().remove();
-            TableFactoryService.getFactoryHelperThreadLocal().remove();
         }
     }
 
@@ -168,14 +165,13 @@ public class Main {
      * 执行 数据同步类型任务
      *
      * @param env
-     * @param tableEnv
      * @param job
      * @param options
+     *
      * @throws Exception
      */
     private static void exeSyncJob(
             StreamExecutionEnvironment env,
-            StreamTableEnvironment tableEnv,
             String job,
             Options options)
             throws Exception {
@@ -204,15 +200,19 @@ public class Main {
         }
 
         DataStream<RowData> dataStream;
-        boolean transformer =
-                config.getTransformer() != null
-                        && StringUtils.isNotBlank(config.getTransformer().getTransformSql());
+        //boolean transformer =
+        //        config.getTransformer() != null
+        //                && StringUtils.isNotBlank(config.getTransformer().getTransformSql());
 
-        if (transformer) {
-            dataStream = syncStreamToTable(tableEnv, config, dataStreamSource);
-        } else {
-            dataStream = dataStreamSource;
-        }
+        // transformer 需要在之前就设置
+        //if (transformer) {
+        //    dataStream = syncStreamToTable(tableEnv, config, dataStreamSource);
+        //} else {
+        //    dataStream = dataStreamSource;
+        //}
+
+        dataStream = dataStreamSource;
+
 
         if (speed.isRebalance()) {
             dataStream = dataStream.rebalance();
@@ -236,6 +236,7 @@ public class Main {
      * @param tableEnv
      * @param config
      * @param sourceDataStream
+     *
      * @return
      */
     private static DataStream<RowData> syncStreamToTable(
@@ -244,7 +245,7 @@ public class Main {
             DataStream<RowData> sourceDataStream) {
         String fieldNames =
                 String.join(ConstantValue.COMMA_SYMBOL, config.getReader().getFieldNameList());
-        List<Expression> expressionList = ExpressionParser.parseExpressionList(fieldNames);
+        List<Expression> expressionList = ExpressionParser.INSTANCE.parseExpressionList(fieldNames);
         Table sourceTable =
                 tableEnv.fromDataStream(
                         sourceDataStream, expressionList.toArray(new Expression[0]));
@@ -273,6 +274,7 @@ public class Main {
      *
      * @param job
      * @param options
+     *
      * @return
      */
     public static SyncConf parseConf(String job, Options options) {
@@ -332,9 +334,6 @@ public class Main {
                     Thread.currentThread().getContextClassLoader(),
                     ConstantValue.DIRTY_DATA_DIR_NAME);
             // TODO sql 支持restore.
-
-            FactoryUtil.setFactoryUtilHelp(factoryHelper);
-            TableFactoryService.setFactoryUtilHelp(factoryHelper);
         }
         PluginUtil.registerShipfileToCachedFile(options.getAddShipfile(), env);
     }

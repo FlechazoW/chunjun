@@ -22,18 +22,16 @@ import com.dtstack.chunjun.connector.stream.conf.StreamConf;
 import com.dtstack.chunjun.source.format.BaseRichInputFormat;
 import com.dtstack.chunjun.throwable.ReadRecordException;
 
+import com.google.common.util.concurrent.RateLimiter;
+import org.apache.commons.collections.CollectionUtils;
+
 import org.apache.flink.core.io.GenericInputSplit;
 import org.apache.flink.core.io.InputSplit;
 import org.apache.flink.table.data.RowData;
 
-import org.apache.flink.shaded.curator4.com.google.common.util.concurrent.RateLimiter;
-
-import org.apache.commons.collections.CollectionUtils;
-
 /**
- * @Company: www.dtstack.com
- *
  * @author jiangbo
+ * @Company: www.dtstack.com
  */
 public class StreamInputFormat extends BaseRichInputFormat {
     private StreamConf streamConf;

@@ -26,32 +26,27 @@ import com.dtstack.chunjun.lookup.cache.AbstractSideCache;
 import com.dtstack.chunjun.lookup.cache.CacheObj;
 import com.dtstack.chunjun.lookup.cache.LRUSideCache;
 import com.dtstack.chunjun.lookup.conf.LookupConf;
-import com.dtstack.chunjun.util.ReflectionUtils;
+
+import com.google.common.collect.Lists;
 
 import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.api.common.functions.RuntimeContext;
 import org.apache.flink.metrics.Counter;
 import org.apache.flink.runtime.execution.SuppressRestartsException;
-import org.apache.flink.streaming.api.functions.async.RichAsyncFunction;
-import org.apache.flink.streaming.api.operators.StreamingRuntimeContext;
-import org.apache.flink.streaming.runtime.tasks.ProcessingTimeService;
 import org.apache.flink.table.data.RowData;
 import org.apache.flink.table.functions.AsyncTableFunction;
 import org.apache.flink.table.functions.FunctionContext;
 
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ScheduledFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -67,8 +62,7 @@ public abstract class AbstractLruTableFunction extends AsyncTableFunction<RowDat
     protected AbstractSideCache sideCache;
     /** 维表配置 */
     protected LookupConf lookupConf;
-    /** 运行环境 */
-    private RuntimeContext runtimeContext;
+
     /** 数据类型转换器 */
     protected final AbstractRowConverter rowConverter;
 
@@ -86,10 +80,6 @@ public abstract class AbstractLruTableFunction extends AsyncTableFunction<RowDat
 
         initCache();
         initMetric(context);
-
-        Field field = FunctionContext.class.getDeclaredField("context");
-        field.setAccessible(true);
-        runtimeContext = (RuntimeContext) field.get(context);
 
         LOG.info("async dim table lookupOptions info: {} ", lookupConf.toString());
     }
@@ -124,6 +114,7 @@ public abstract class AbstractLruTableFunction extends AsyncTableFunction<RowDat
      * 通过key得到缓存数据
      *
      * @param key
+     *
      * @return
      */
     protected CacheObj getFromCache(String key) {
@@ -199,6 +190,7 @@ public abstract class AbstractLruTableFunction extends AsyncTableFunction<RowDat
      *
      * @param future
      * @param keys
+     *
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
@@ -235,6 +227,7 @@ public abstract class AbstractLruTableFunction extends AsyncTableFunction<RowDat
      * 判断缓存是否存在
      *
      * @param cacheKey 缓存健
+     *
      * @return
      */
     protected boolean isUseCache(String cacheKey) {
@@ -286,6 +279,7 @@ public abstract class AbstractLruTableFunction extends AsyncTableFunction<RowDat
      *
      * @param keys 关联字段数据
      * @param future
+     *
      * @throws Exception
      */
     public abstract void handleAsyncInvoke(
@@ -295,59 +289,11 @@ public abstract class AbstractLruTableFunction extends AsyncTableFunction<RowDat
      * 构建缓存key值
      *
      * @param keys
+     *
      * @return
      */
     public String buildCacheKey(Object... keys) {
-        return Arrays.stream(keys).map(e -> String.valueOf(e)).collect(Collectors.joining("_"));
-    }
-
-    private ProcessingTimeService getProcessingTimeService() {
-        try {
-            Field runtimeContextField =
-                    RichAsyncFunction.RichAsyncFunctionRuntimeContext.class.getDeclaredField(
-                            "runtimeContext");
-            runtimeContextField.setAccessible(true);
-            RichAsyncFunction.RichAsyncFunctionRuntimeContext functionRuntimeContext =
-                    (RichAsyncFunction.RichAsyncFunctionRuntimeContext)
-                            runtimeContextField.get(runtimeContext);
-
-            Field streamingRuntimeContextField =
-                    RichAsyncFunction.RichAsyncFunctionRuntimeContext.class.getDeclaredField(
-                            "runtimeContext");
-            streamingRuntimeContextField.setAccessible(true);
-            StreamingRuntimeContext streamingRuntimeContext =
-                    (StreamingRuntimeContext)
-                            streamingRuntimeContextField.get(functionRuntimeContext);
-
-            Field processingTimeServiceField =
-                    StreamingRuntimeContext.class.getDeclaredField("processingTimeService");
-            processingTimeServiceField.setAccessible(true);
-            ProcessingTimeService processingTimeService =
-                    (ProcessingTimeService) processingTimeServiceField.get(streamingRuntimeContext);
-            return processingTimeService;
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected ScheduledFuture<?> registerTimer(
-            CompletableFuture<Collection<RowData>> future, Object... keys) {
-        ProcessingTimeService processingTimeService = getProcessingTimeService();
-        long timeoutTimestamp =
-                lookupConf.getAsyncTimeout() + processingTimeService.getCurrentProcessingTime();
-        return processingTimeService.registerTimer(
-                timeoutTimestamp, timestamp -> timeout(future, keys));
-    }
-
-    protected void registerTimerAndAddToHandler(
-            CompletableFuture<Collection<RowData>> future, Object... keys)
-            throws InvocationTargetException, IllegalAccessException {
-        ScheduledFuture<?> timeFuture = registerTimer(future, keys);
-        // resultFuture 是ResultHandler 的实例
-        Method setTimeoutTimer =
-                ReflectionUtils.getDeclaredMethod(future, "setTimeoutTimer", ScheduledFuture.class);
-        setTimeoutTimer.setAccessible(true);
-        setTimeoutTimer.invoke(future, timeFuture);
+        return Arrays.stream(keys).map(String::valueOf).collect(Collectors.joining("_"));
     }
 
     /**

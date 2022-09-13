@@ -30,6 +30,8 @@ import com.dtstack.chunjun.table.connector.source.ParallelAsyncTableFunctionProv
 import com.dtstack.chunjun.table.connector.source.ParallelSourceFunctionProvider;
 import com.dtstack.chunjun.table.connector.source.ParallelTableFunctionProvider;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.table.api.TableSchema;
 import org.apache.flink.table.connector.ChangelogMode;
@@ -38,12 +40,8 @@ import org.apache.flink.table.connector.source.LookupTableSource;
 import org.apache.flink.table.connector.source.ScanTableSource;
 import org.apache.flink.table.connector.source.abilities.SupportsProjectionPushDown;
 import org.apache.flink.table.data.RowData;
-import org.apache.flink.table.runtime.typeutils.InternalTypeInfo;
 import org.apache.flink.table.types.logical.RowType;
-import org.apache.flink.table.utils.TableSchemaUtils;
 import org.apache.flink.util.Preconditions;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +109,9 @@ public class JdbcDynamicTableSource
     @Override
     public ScanRuntimeProvider getScanRuntimeProvider(ScanContext runtimeProviderContext) {
         final RowType rowType = (RowType) physicalSchema.toRowDataType().getLogicalType();
-        TypeInformation<RowData> typeInformation = InternalTypeInfo.of(rowType);
+
+        //TODO
+        TypeInformation<RowData> typeInformation = null;
 
         JdbcInputFormatBuilder builder = this.builder;
         String[] fieldNames = physicalSchema.getFieldNames();
@@ -174,11 +174,6 @@ public class JdbcDynamicTableSource
     public boolean supportsNestedProjection() {
         // JDBC doesn't support nested projection
         return false;
-    }
-
-    @Override
-    public void applyProjection(int[][] projectedFields) {
-        this.physicalSchema = TableSchemaUtils.projectSchema(physicalSchema, projectedFields);
     }
 
     @Override

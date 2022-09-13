@@ -27,12 +27,12 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<target.java.version>1.8</target.java.version>
-		<flink.version>1.12.7</flink.version>
+		<flink.version>1.15.2</flink.version>
 		<scala.binary.version>2.12</scala.binary.version>
-		<prometheus.version>0.8.1</prometheus.version>
-		<hadoop.version>3.1.4</hadoop.version>
+		<prometheus.version>0.16.0</prometheus.version>
+		<hadoop.version>2.8.5</hadoop.version>
 		<http.version>4.5.3</http.version>
-		<flinkx.guava.version>27.0-jre</flinkx.guava.version>
+		<chunjun.guava.version>27.0-jre</chunjun.guava.version>
 		<!-- fix CVE-2021-45105 -->
 		<log4j2.version>2.17.0</log4j2.version>
 		<dist.dir>chunjun-dist</dist.dir>
@@ -341,7 +341,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>${flinkx.guava.version}</version>
+				<version>${chunjun.guava.version}</version>
 			</dependency>
 
 			<!-- For dependency convergence -->
@@ -406,19 +406,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 
 			<plugin>
@@ -545,22 +532,6 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>report</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-		</plugins>
-	</reporting>
 
 	<profiles>
 		<profile>

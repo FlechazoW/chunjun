@@ -174,13 +174,13 @@
 
 		<dependency>
 			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-parquet_${scala.binary.version}</artifactId>
+			<artifactId>flink-parquet</artifactId>
 			<version>${flink.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-orc_${scala.binary.version}</artifactId>
+			<artifactId>flink-orc</artifactId>
 			<version>${flink.version}</version>
 			<scope>provided</scope>
 		</dependency>

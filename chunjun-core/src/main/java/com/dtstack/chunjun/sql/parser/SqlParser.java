@@ -23,12 +23,10 @@ import com.dtstack.chunjun.util.DtStringUtil;
 import com.dtstack.chunjun.util.PwdUtil;
 import com.dtstack.chunjun.util.Splitter;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.apache.flink.table.api.StatementSet;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
-
-import org.apache.flink.shaded.guava18.com.google.common.base.Strings;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.List;
@@ -62,7 +60,7 @@ public class SqlParser {
         AbstractStmtParser stmtParser = createParserChain();
 
         stmts.stream()
-                .filter(stmt -> !Strings.isNullOrEmpty(stmt.trim()))
+                .filter(stmt -> !StringUtils.isEmpty(stmt.trim()))
                 .forEach(
                         stmt -> {
                             try {
