@@ -28,8 +28,10 @@ import org.apache.flink.table.catalog.ResolvedSchema;
 import org.apache.flink.table.connector.ChangelogMode;
 import org.apache.flink.table.connector.sink.DynamicTableSink;
 import org.apache.flink.table.connector.sink.SinkFunctionProvider;
-import org.apache.flink.table.runtime.typeutils.InternalTypeInfo;
+import org.apache.flink.table.types.DataType;
 import org.apache.flink.table.types.logical.LogicalType;
+
+import java.util.List;
 
 public class StreamDynamicTableSink implements DynamicTableSink {
 
@@ -51,13 +53,13 @@ public class StreamDynamicTableSink implements DynamicTableSink {
 
     @Override
     public SinkFunctionProvider getSinkRuntimeProvider(Context context) {
-        final InternalTypeInfo<?> typeInformation = InternalTypeInfo.of(logicalType);
+        List<DataType> columnDataTypes = schema.getColumnDataTypes();
 
         StreamConfigUtil.extractFieldConfig(schema, streamConfig);
 
         StreamOutputFormatBuilder builder = new StreamOutputFormatBuilder();
         builder.setStreamConfig(streamConfig);
-        builder.setRowConverter(new StreamRowConverter(typeInformation.toRowType()));
+        builder.setRowConverter(new StreamRowConverter(columnDataTypes));
 
         return SinkFunctionProvider.of(
                 new DtOutputFormatSinkFunction<>(builder.finish()), streamConfig.getParallelism());

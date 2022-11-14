@@ -34,8 +34,8 @@ import com.dtstack.chunjun.environment.EnvFactory;
 import com.dtstack.chunjun.environment.MyLocalStreamEnvironment;
 import com.dtstack.chunjun.mapping.MappingConf;
 import com.dtstack.chunjun.mapping.NameMappingFlatMap;
+import com.dtstack.chunjun.options.CommandOptions;
 import com.dtstack.chunjun.options.OptionParser;
-import com.dtstack.chunjun.options.Options;
 import com.dtstack.chunjun.sink.SinkFactory;
 import com.dtstack.chunjun.source.SourceFactory;
 import com.dtstack.chunjun.sql.parser.SqlParser;
@@ -100,7 +100,7 @@ public class Main {
         Arrays.stream(args).forEach(arg -> LOG.info("{}", arg));
         LOG.info("-------------------------------------------");
 
-        Options options = new OptionParser(args).getOptions();
+        CommandOptions options = new OptionParser(args).getOptions();
         String job = URLDecoder.decode(options.getJob(), StandardCharsets.UTF_8.name());
         String replacedJob = JobUtil.replaceJobParameter(options.getP(), job);
         Properties confProperties = PropertiesUtil.parseConf(options.getConfProp());
@@ -140,7 +140,7 @@ public class Main {
             StreamExecutionEnvironment env,
             StreamTableEnvironment tableEnv,
             String job,
-            Options options) {
+            CommandOptions options) {
         try {
             configStreamExecutionEnvironment(env, options, null);
             List<URL> jarUrlList = ExecuteProcessHelper.getExternalJarUrls(options.getAddjar());
@@ -173,7 +173,7 @@ public class Main {
             StreamExecutionEnvironment env,
             StreamTableEnvironment tableEnv,
             String job,
-            Options options)
+            CommandOptions options)
             throws Exception {
         SyncConf config = parseConf(job, options);
         configStreamExecutionEnvironment(env, options, config);
@@ -274,7 +274,7 @@ public class Main {
      * @param options
      * @return
      */
-    public static SyncConf parseConf(String job, Options options) {
+    public static SyncConf parseConf(String job, CommandOptions options) {
         SyncConf config;
         try {
             config = SyncConf.parseJob(job);
@@ -306,7 +306,7 @@ public class Main {
      * @param config ChunJunConf
      */
     private static void configStreamExecutionEnvironment(
-            StreamExecutionEnvironment env, Options options, SyncConf config) {
+            StreamExecutionEnvironment env, CommandOptions options, SyncConf config) {
 
         if (config != null) {
             PluginUtil.registerPluginUrlToCachedFile(options, config, env);

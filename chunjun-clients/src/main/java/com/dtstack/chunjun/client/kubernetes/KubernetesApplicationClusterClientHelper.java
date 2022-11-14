@@ -21,7 +21,7 @@ import com.dtstack.chunjun.client.ClusterClientHelper;
 import com.dtstack.chunjun.client.JobDeployer;
 import com.dtstack.chunjun.client.constants.ConfigConstant;
 import com.dtstack.chunjun.client.util.PluginInfoUtil;
-import com.dtstack.chunjun.options.Options;
+import com.dtstack.chunjun.options.CommandOptions;
 
 import org.apache.flink.client.deployment.ClusterSpecification;
 import org.apache.flink.client.deployment.application.ApplicationConfiguration;
@@ -54,19 +54,14 @@ import java.util.List;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
-/**
- * @program: ChunJun
- * @author: xiuzhu
- * @create: 2021/05/31
- */
 public class KubernetesApplicationClusterClientHelper implements ClusterClientHelper {
 
     private static final Logger LOG =
             LoggerFactory.getLogger(KubernetesApplicationClusterClientHelper.class);
 
     @Override
-    public ClusterClient submit(JobDeployer jobDeployer) throws Exception {
-        Options launcherOptions = jobDeployer.getLauncherOptions();
+    public ClusterClient<?> submit(JobDeployer jobDeployer) throws Exception {
+        CommandOptions launcherOptions = jobDeployer.getLauncherOptions();
         List<String> programArgs = jobDeployer.getProgramArgs();
         Configuration effectiveConfiguration = jobDeployer.getEffectiveConfiguration();
 
@@ -151,7 +146,7 @@ public class KubernetesApplicationClusterClientHelper implements ClusterClientHe
         return programArgs;
     }
 
-    private void setDeployerConfig(Configuration configuration, Options launcherOptions)
+    private void setDeployerConfig(Configuration configuration, CommandOptions launcherOptions)
             throws FileNotFoundException {
         configuration.set(DeploymentOptionsInternal.CONF_DIR, launcherOptions.getFlinkConfDir());
 

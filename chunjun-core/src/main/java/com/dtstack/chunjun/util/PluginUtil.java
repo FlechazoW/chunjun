@@ -26,7 +26,7 @@ import com.dtstack.chunjun.dirty.DirtyConf;
 import com.dtstack.chunjun.dirty.utils.DirtyConfUtil;
 import com.dtstack.chunjun.enums.ClusterMode;
 import com.dtstack.chunjun.enums.OperatorType;
-import com.dtstack.chunjun.options.Options;
+import com.dtstack.chunjun.options.CommandOptions;
 import com.dtstack.chunjun.throwable.ChunJunRuntimeException;
 
 import org.apache.flink.annotation.VisibleForTesting;
@@ -310,7 +310,7 @@ public class PluginUtil {
      * @param env
      */
     public static void registerPluginUrlToCachedFile(
-            Options options, SyncConf config, StreamExecutionEnvironment env) {
+            CommandOptions options, SyncConf config, StreamExecutionEnvironment env) {
         DirtyConf dirtyConf = DirtyConfUtil.parse(options);
 
         Set<URL> urlSet = new HashSet<>();

@@ -18,7 +18,7 @@
 
 package com.dtstack.chunjun.environment;
 
-import com.dtstack.chunjun.options.Options;
+import com.dtstack.chunjun.options.CommandOptions;
 
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -54,7 +54,7 @@ class EnvFactoryTest {
     @Test
     @DisplayName("Should return a streamexecutionenvironment when the mode is local")
     public void createStreamExecutionEnvironmentWhenModeIsLocal() {
-        Options options = new Options();
+        CommandOptions options = new CommandOptions();
         options.setMode("local");
         StreamExecutionEnvironment env = EnvFactory.createStreamExecutionEnvironment(options);
         assertTrue(env instanceof MyLocalStreamEnvironment);
@@ -63,7 +63,7 @@ class EnvFactoryTest {
     @Test
     @DisplayName("Should return a streamexecutionenvironment when the mode is not local")
     public void createStreamExecutionEnvironmentWhenModeIsNotLocal() {
-        Options options = new Options();
+        CommandOptions options = new CommandOptions();
         options.setMode("standalone");
         StreamExecutionEnvironment env = EnvFactory.createStreamExecutionEnvironment(options);
         assertTrue(env instanceof StreamExecutionEnvironment);

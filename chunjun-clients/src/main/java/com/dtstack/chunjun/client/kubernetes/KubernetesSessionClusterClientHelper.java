@@ -20,7 +20,7 @@ package com.dtstack.chunjun.client.kubernetes;
 import com.dtstack.chunjun.client.ClusterClientHelper;
 import com.dtstack.chunjun.client.JobDeployer;
 import com.dtstack.chunjun.client.util.JobGraphUtil;
-import com.dtstack.chunjun.options.Options;
+import com.dtstack.chunjun.options.CommandOptions;
 
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.client.program.ClusterClient;
@@ -38,19 +38,14 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-/**
- * @program: ChunJun
- * @author: xiuzhu
- * @create: 2021/05/31
- */
 public class KubernetesSessionClusterClientHelper implements ClusterClientHelper {
 
     private static final Logger LOG =
             LoggerFactory.getLogger(KubernetesSessionClusterClientHelper.class);
 
     @Override
-    public ClusterClient submit(JobDeployer jobDeployer) throws Exception {
-        Options launcherOptions = jobDeployer.getLauncherOptions();
+    public ClusterClient<?> submit(JobDeployer jobDeployer) throws Exception {
+        CommandOptions launcherOptions = jobDeployer.getLauncherOptions();
         List<String> programArgs = jobDeployer.getProgramArgs();
 
         Configuration configuration = jobDeployer.getEffectiveConfiguration();

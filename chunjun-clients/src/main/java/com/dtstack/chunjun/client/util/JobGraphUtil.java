@@ -17,7 +17,7 @@
  */
 package com.dtstack.chunjun.client.util;
 
-import com.dtstack.chunjun.options.Options;
+import com.dtstack.chunjun.options.CommandOptions;
 
 import org.apache.flink.client.deployment.ClusterSpecification;
 import org.apache.flink.client.program.PackagedProgram;
@@ -45,7 +45,7 @@ public class JobGraphUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobGraphUtil.class);
 
-    public static JobGraph buildJobGraph(Options launcherOptions, String[] programArgs)
+    public static JobGraph buildJobGraph(CommandOptions launcherOptions, String[] programArgs)
             throws Exception {
         String pluginRoot = launcherOptions.getChunjunDistDir();
         String coreJarPath = PluginInfoUtil.getCoreJarPath(pluginRoot);

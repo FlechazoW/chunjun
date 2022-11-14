@@ -27,7 +27,6 @@ import org.apache.flink.api.java.typeutils.GenericTypeInfo;
 import org.apache.flink.table.api.TableColumn;
 import org.apache.flink.table.api.TableSchema;
 import org.apache.flink.table.data.RowData;
-import org.apache.flink.table.runtime.typeutils.InternalTypeInfo;
 import org.apache.flink.table.types.DataType;
 import org.apache.flink.table.types.logical.LogicalType;
 import org.apache.flink.table.types.logical.LogicalTypeRoot;
@@ -50,6 +49,7 @@ public class TableUtil {
      * 获取TypeInformation
      *
      * @param fieldList 任务参数实体类
+     *
      * @return TypeInformation
      */
     public static TypeInformation<RowData> getTypeInformation(
@@ -73,7 +73,7 @@ public class TableUtil {
             builder.add(TableColumn.physical(fieldNames[i], dataType));
         }
         DataType[] dataTypes =
-                builder.build().toRowDataType().getChildren().toArray(new DataType[] {});
+                builder.build().toRowDataType().getChildren().toArray(new DataType[]{});
 
         return getTypeInformation(dataTypes, fieldNames, fieldFormat, useAbstractBaseColumn);
     }
@@ -83,6 +83,7 @@ public class TableUtil {
      *
      * @param dataTypes
      * @param fieldNames
+     *
      * @return
      */
     public static TypeInformation<RowData> getTypeInformation(
@@ -95,6 +96,7 @@ public class TableUtil {
      *
      * @param dataTypes
      * @param fieldNames
+     *
      * @return
      */
     public static TypeInformation<RowData> getTypeInformation(
@@ -110,7 +112,8 @@ public class TableUtil {
             }
             return ColumnRowDataTypeInfo.of(rowType);
         } else {
-            return InternalTypeInfo.of(getRowType(dataTypes, fieldNames, fieldFormat));
+            //return InternalTypeInfo.of(getRowType(dataTypes, fieldNames, fieldFormat));
+            return null;
         }
     }
 
@@ -125,6 +128,7 @@ public class TableUtil {
      *
      * @param dataTypes
      * @param fieldNames
+     *
      * @return
      */
     public static RowType getRowType(
@@ -151,6 +155,7 @@ public class TableUtil {
      *
      * @param fieldNames field Names
      * @param types field types
+     *
      * @return
      */
     public static RowType createRowType(
@@ -167,6 +172,7 @@ public class TableUtil {
      * only using in data sync/integration
      *
      * @param fields List<FieldConf>, field information name, type etc.
+     *
      * @return
      */
     public static RowType createRowType(List<FieldConfig> fields, RawTypeConverter converter) {
@@ -177,6 +183,7 @@ public class TableUtil {
      * only using in data sync/integration
      *
      * @param fields List<FieldConf>, field information name, type etc.
+     *
      * @return
      */
     public static TableSchema createTableSchema(

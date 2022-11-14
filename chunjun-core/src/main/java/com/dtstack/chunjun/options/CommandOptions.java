@@ -34,14 +34,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.StringJoiner;
 
-/**
- * Date: 2021/03/18 Company: www.dtstack.com
- *
- * @author tudou
- */
-public class Options {
+public class CommandOptions {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Options.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CommandOptions.class);
 
     @OptionRequired(description = "job type:sql or sync")
     private String jobType;
@@ -226,7 +221,7 @@ public class Options {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Options.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", CommandOptions.class.getSimpleName() + "[", "]")
                 .add("jobType='" + jobType + "'")
                 .add("mode='" + mode + "'")
                 .add("job='" + job + "'")

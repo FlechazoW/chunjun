@@ -17,7 +17,7 @@
  */
 package com.dtstack.chunjun.client;
 
-import com.dtstack.chunjun.options.Options;
+import com.dtstack.chunjun.options.CommandOptions;
 import com.dtstack.chunjun.util.MapUtil;
 
 import org.apache.flink.configuration.Configuration;
@@ -28,18 +28,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * @program: Chunjun
- * @author: xiuzhu
- * @create: 2021/05/31
- */
 public class JobDeployer {
 
     private List<String> programArgs;
 
-    private Options launcherOptions;
+    private CommandOptions launcherOptions;
 
-    public JobDeployer(Options launcherOptions, List<String> programArgs) {
+    public JobDeployer(CommandOptions launcherOptions, List<String> programArgs) {
         this.launcherOptions = launcherOptions;
         this.programArgs = programArgs;
     }
@@ -74,11 +69,11 @@ public class JobDeployer {
         this.programArgs = programArgs;
     }
 
-    public Options getLauncherOptions() {
+    public CommandOptions getLauncherOptions() {
         return launcherOptions;
     }
 
-    public void setLauncherOptions(Options launcherOptions) {
+    public void setLauncherOptions(CommandOptions launcherOptions) {
         this.launcherOptions = launcherOptions;
     }
 }

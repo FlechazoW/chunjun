@@ -28,7 +28,7 @@ import com.dtstack.chunjun.conf.SyncConfBuilder;
 import com.dtstack.chunjun.constants.ConfigConstant;
 import com.dtstack.chunjun.constants.ConstantValue;
 import com.dtstack.chunjun.enums.ClusterMode;
-import com.dtstack.chunjun.options.Options;
+import com.dtstack.chunjun.options.CommandOptions;
 import com.dtstack.chunjun.source.SourceFactoryTest;
 
 import org.apache.flink.api.common.cache.DistributedCache;
@@ -137,7 +137,7 @@ public class PluginUtilTest {
 
     @Test
     public void testRegisterPluginUrlToCachedFile() throws IOException {
-        Options options = new Options();
+        CommandOptions options = new CommandOptions();
         SpeedConf speedConf = new SpeedConf();
         speedConf.setChannel(5);
         speedConf.setWriterChannel(3);

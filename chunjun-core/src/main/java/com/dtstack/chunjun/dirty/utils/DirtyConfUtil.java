@@ -19,7 +19,7 @@
 package com.dtstack.chunjun.dirty.utils;
 
 import com.dtstack.chunjun.dirty.DirtyConf;
-import com.dtstack.chunjun.options.Options;
+import com.dtstack.chunjun.options.CommandOptions;
 import com.dtstack.chunjun.throwable.NoRestartException;
 import com.dtstack.chunjun.util.PropertiesUtil;
 
@@ -93,7 +93,7 @@ public class DirtyConfUtil {
         return dirtyConf;
     }
 
-    public static DirtyConf parse(Options options) {
+    public static DirtyConf parse(CommandOptions options) {
         try {
             Properties properties = PropertiesUtil.parseConf(options.getConfProp());
             properties.put(

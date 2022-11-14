@@ -18,7 +18,7 @@
 
 package com.dtstack.chunjun.dirty;
 
-import com.dtstack.chunjun.options.Options;
+import com.dtstack.chunjun.options.CommandOptions;
 import com.dtstack.chunjun.throwable.NoRestartException;
 
 import java.io.Serializable;
@@ -51,7 +51,7 @@ public class DirtyConf implements Serializable {
     /** Custom parameters of different dirty-plugin. */
     private Properties pluginProperties = new Properties();
 
-    /** ChunJun dirty-plugins local plugins path {@link Options#getFlinkLibDir()} */
+    /** ChunJun dirty-plugins local plugins path {@link CommandOptions#getFlinkLibDir()} */
     private String localPluginPath;
 
     public long getMaxConsumed() {

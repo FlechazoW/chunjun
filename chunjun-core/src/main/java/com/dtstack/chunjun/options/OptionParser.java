@@ -47,7 +47,7 @@ public class OptionParser {
 
     private final DefaultParser parser = new DefaultParser();
 
-    private final Options properties = new Options();
+    private final CommandOptions properties = new CommandOptions();
 
     public OptionParser(String[] args) throws Exception {
         Class cla = properties.getClass();
@@ -104,7 +104,7 @@ public class OptionParser {
         return args;
     }
 
-    public Options getOptions() {
+    public CommandOptions getOptions() {
         return properties;
     }
 }

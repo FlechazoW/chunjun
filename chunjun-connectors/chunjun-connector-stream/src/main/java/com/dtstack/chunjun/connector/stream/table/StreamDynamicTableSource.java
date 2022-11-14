@@ -31,7 +31,6 @@ import org.apache.flink.table.connector.ChangelogMode;
 import org.apache.flink.table.connector.source.DynamicTableSource;
 import org.apache.flink.table.connector.source.ScanTableSource;
 import org.apache.flink.table.data.RowData;
-import org.apache.flink.table.runtime.typeutils.InternalTypeInfo;
 import org.apache.flink.table.types.DataType;
 
 public class StreamDynamicTableSource implements ScanTableSource {
@@ -49,15 +48,14 @@ public class StreamDynamicTableSource implements ScanTableSource {
 
     @Override
     public ScanRuntimeProvider getScanRuntimeProvider(ScanContext runtimeProviderContext) {
-        final TypeInformation<RowData> typeInformation =
-                InternalTypeInfo.of(physicalRowDataType.getLogicalType());
+
+        TypeInformation<RowData> typeInformation = runtimeProviderContext.createTypeInformation(physicalRowDataType);
 
         StreamConfigUtil.extractFieldConfig(schema, streamConfig);
 
         StreamInputFormatBuilder builder = new StreamInputFormatBuilder();
         builder.setRowConverter(
-                new StreamRowConverter(
-                        InternalTypeInfo.of(physicalRowDataType.getLogicalType()).toRowType()));
+                new StreamRowConverter(schema.getColumnDataTypes()));
         builder.setStreamConf(streamConfig);
 
         return ParallelSourceFunctionProvider.of(

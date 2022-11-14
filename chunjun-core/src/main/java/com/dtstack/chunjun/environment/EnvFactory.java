@@ -19,7 +19,7 @@
 package com.dtstack.chunjun.environment;
 
 import com.dtstack.chunjun.enums.ClusterMode;
-import com.dtstack.chunjun.options.Options;
+import com.dtstack.chunjun.options.CommandOptions;
 import com.dtstack.chunjun.util.PropertiesUtil;
 
 import org.apache.flink.configuration.Configuration;
@@ -46,7 +46,8 @@ public class EnvFactory {
      * @param options
      * @return
      */
-    public static StreamExecutionEnvironment createStreamExecutionEnvironment(Options options) {
+    public static StreamExecutionEnvironment createStreamExecutionEnvironment(
+            CommandOptions options) {
         Configuration flinkConf = new Configuration();
         Configuration cfg = Configuration.fromMap(PropertiesUtil.confToMap(options.getConfProp()));
         if (StringUtils.isNotEmpty(options.getFlinkConfDir())) {

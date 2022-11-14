@@ -25,8 +25,8 @@ import com.dtstack.chunjun.client.standalone.StandaloneClusterClientHelper;
 import com.dtstack.chunjun.client.yarn.YarnPerJobClusterClientHelper;
 import com.dtstack.chunjun.client.yarn.YarnSessionClusterClientHelper;
 import com.dtstack.chunjun.enums.ClusterMode;
+import com.dtstack.chunjun.options.CommandOptions;
 import com.dtstack.chunjun.options.OptionParser;
-import com.dtstack.chunjun.options.Options;
 import com.dtstack.chunjun.util.ExecuteProcessHelper;
 
 import org.apache.flink.client.deployment.ClusterDeploymentException;
@@ -42,13 +42,7 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Chunjun commandline Launcher
- *
- * <p>Company: www.dtstack.com
- *
- * @author huyifan.zju@163.com
- */
+/** Chunjun commandline Launcher */
 public class Launcher {
     private static final Logger LOG = LoggerFactory.getLogger(Launcher.class);
 
@@ -60,7 +54,7 @@ public class Launcher {
 
     public static void main(String[] args) throws Exception {
         OptionParser optionParser = new OptionParser(args);
-        Options launcherOptions = optionParser.getOptions();
+        CommandOptions launcherOptions = optionParser.getOptions();
 
         findDefaultConfigDir(launcherOptions);
 
@@ -119,7 +113,7 @@ public class Launcher {
         clusterClientHelper.submit(jobDeployer);
     }
 
-    private static void findDefaultConfigDir(Options launcherOptions)
+    private static void findDefaultConfigDir(CommandOptions launcherOptions)
             throws ClusterDeploymentException {
         findDefaultChunJunDistDir(launcherOptions);
 
@@ -131,7 +125,7 @@ public class Launcher {
         findDefaultHadoopConf(launcherOptions);
     }
 
-    private static void findDefaultHadoopConf(Options launcherOptions) {
+    private static void findDefaultHadoopConf(CommandOptions launcherOptions) {
         if (StringUtils.isNotEmpty(launcherOptions.getHadoopConfDir())) {
             return;
         }
@@ -147,7 +141,7 @@ public class Launcher {
         }
     }
 
-    private static void findDefaultFlinkConf(Options launcherOptions) {
+    private static void findDefaultFlinkConf(CommandOptions launcherOptions) {
 
         String flinkHome = getSystemProperty(KEY_FLINK_HOME);
         if (StringUtils.isNotEmpty(flinkHome)) {
@@ -166,7 +160,7 @@ public class Launcher {
         }
     }
 
-    private static void findDefaultChunJunDistDir(Options launcherOptions)
+    private static void findDefaultChunJunDistDir(CommandOptions launcherOptions)
             throws ClusterDeploymentException {
         String distDir = launcherOptions.getChunjunDistDir();
         if (StringUtils.isEmpty(distDir)) {
