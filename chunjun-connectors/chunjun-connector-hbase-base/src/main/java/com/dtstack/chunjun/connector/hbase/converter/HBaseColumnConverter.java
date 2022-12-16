@@ -208,9 +208,9 @@ public class HBaseColumnConverter
         }
 
         put.setTTL(
-                Optional.ofNullable(hBaseConf.getTtl()).orElseGet(() -> (long) Integer.MAX_VALUE));
+                Optional.ofNullable(hBaseConfig.getTtl()).orElseGet(() -> (long) Integer.MAX_VALUE));
 
-        for (int i = 0; i < rowData.getArity(); i++) {
+        for (int i = 0; i < fieldTypes.length; i++) {
             if (rowKeyIndex == i || columnConfigIndex.contains(i)) {
                 continue;
             }
