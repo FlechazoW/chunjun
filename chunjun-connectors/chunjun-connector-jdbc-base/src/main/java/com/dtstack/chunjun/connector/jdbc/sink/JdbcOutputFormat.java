@@ -37,10 +37,9 @@ import com.dtstack.chunjun.util.JsonUtil;
 import org.apache.flink.table.data.GenericRowData;
 import org.apache.flink.table.data.RowData;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -50,9 +49,8 @@ import java.util.List;
 import java.util.Set;
 
 /** OutputFormat for writing data to relational database. */
+@Slf4j
 public class JdbcOutputFormat extends BaseRichOutputFormat {
-
-    protected static final Logger LOG = LoggerFactory.getLogger(JdbcOutputFormat.class);
 
     protected static final long serialVersionUID = 1L;
 
@@ -92,12 +90,12 @@ public class JdbcOutputFormat extends BaseRichOutputFormat {
                             JdbcUtil.getTableUniqueIndex(
                                     jdbcConfig.getSchema(), jdbcConfig.getTable(), dbConn);
                     jdbcConfig.setUniqueKey(tableIndex);
-                    LOG.info("updateKey = {}", JsonUtil.toJson(tableIndex));
+                    log.info("updateKey = {}", JsonUtil.toJson(tableIndex));
                 }
             }
 
             buildStmtProxy();
-            LOG.info("subTask[{}}] wait finished", taskNumber);
+            log.info("subTask[{}}] wait finished", taskNumber);
         } catch (SQLException sqe) {
             throw new IllegalArgumentException("open() failed.", sqe);
         } finally {
@@ -159,7 +157,7 @@ public class JdbcOutputFormat extends BaseRichOutputFormat {
                 rowsOfCurrentTransaction += rows.size();
             }
         } catch (Exception e) {
-            LOG.warn(
+            log.warn(
                     "write Multiple Records error, start to rollback connection, row size = {}, first row = {}",
                     rows.size(),
                     rows.size() > 0 ? GsonUtil.GSON.toJson(rows.get(0)) : "null",
@@ -184,7 +182,7 @@ public class JdbcOutputFormat extends BaseRichOutputFormat {
                                 .getField(jdbcConfig.getRestoreColumnIndex())
                                 .asString();
             } else {
-                LOG.warn("can't get [{}] from lastRow:{}", jdbcConfig.getRestoreColumn(), lastRow);
+                log.warn("can't get [{}] from lastRow:{}", jdbcConfig.getRestoreColumn(), lastRow);
                 state = null;
             }
             formatState.setState(state);
@@ -235,7 +233,7 @@ public class JdbcOutputFormat extends BaseRichOutputFormat {
                     String[] strings = sql.split(";");
                     for (String s : strings) {
                         if (StringUtils.isNotBlank(s)) {
-                            LOG.info("add sql to batch, sql = {}", s);
+                            log.info("add sql to batch, sql = {}", s);
                             stmt.addBatch(s);
                         }
                     }
@@ -278,7 +276,7 @@ public class JdbcOutputFormat extends BaseRichOutputFormat {
             throw new IllegalArgumentException("Unknown write mode:" + jdbcConfig.getMode());
         }
 
-        LOG.info("write sql:{}", singleSql);
+        log.info("write sql:{}", singleSql);
         return singleSql;
     }
 
@@ -337,13 +335,13 @@ public class JdbcOutputFormat extends BaseRichOutputFormat {
         String schema = ddlRowData.getTableIdentifier().getSchema();
         if (ddlRowData instanceof DdlRowDataConvented) {
             sql = ((DdlRowDataConvented) ddlRowData).getConventInfo();
-            LOG.info(
+            log.info(
                     "receive a convented ddlSql {} for table:{} and origin sql is {}",
                     ((DdlRowDataConvented) ddlRowData).getConventInfo(),
                     ddlRowData.getTableIdentifier().toString(),
                     ddlRowData.getSql());
         } else {
-            LOG.info(
+            log.info(
                     "receive a ddlSql {}  for table:{}",
                     ddlRowData.getSql(),
                     ddlRowData.getTableIdentifier().toString());
@@ -371,7 +369,7 @@ public class JdbcOutputFormat extends BaseRichOutputFormat {
                                 2,
                                 null);
                     } catch (Throwable e) {
-                        LOG.warn("execute sql {} error", finalSql, e);
+                        log.warn("execute sql {} error", finalSql, e);
                         ddlHandler.updateDDLChange(
                                 ddlRowData.getTableIdentifier(),
                                 ddlRowData.getLsn(),
@@ -390,7 +388,7 @@ public class JdbcOutputFormat extends BaseRichOutputFormat {
                 stmtProxy.close();
             }
         } catch (SQLException e) {
-            LOG.error(ExceptionUtil.getErrorMessage(e));
+            log.error(ExceptionUtil.getErrorMessage(e));
         }
         JdbcUtil.closeDbResources(null, null, dbConn, true);
     }
